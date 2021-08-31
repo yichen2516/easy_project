@@ -94,6 +94,14 @@ public class EasyDao {
         return count == null ? 0 : count;
     }
 
+    public boolean exists(Class<?> type, SelectCondition condition) {
+        return count(type, condition) != 0;
+    }
+
+    public boolean exists(String tableName, String idColumn, SelectCondition condition) {
+        return count(tableName, idColumn, condition) != 0;
+    }
+
     public <T> T selectOne(Class<T> type, String columnName, String columnValue) {
         return select(type, columnName, columnValue, 0, 1).stream().findFirst().orElse(null);
     }

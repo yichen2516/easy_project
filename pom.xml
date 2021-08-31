@@ -17,8 +17,6 @@
     <name>easy-project</name>
     <description>easy-project</description>
 
-
-
     <properties>
         <java.version>1.8</java.version>
     </properties>
