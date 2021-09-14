@@ -272,24 +272,23 @@ public class EasyDao {
 
     @SneakyThrows
     public <T> String getIdColumn(Class<T> tClass) {
-        var parameterSource = new BeanPropertySqlParameterSource(tClass);
-        for (var propertyName : parameterSource.getReadablePropertyNames()) {
-            var name = propertyName;
-            Field declaredField = null;
-            try {
-                declaredField = getDeclaredField(tClass, propertyName);
-            } catch (NoSuchFieldException e) {
-                continue;
-            }
+        for (var declaredField : tClass.getDeclaredFields()) {
             if (declaredField.getDeclaredAnnotation(Id.class) == null) {
                 continue;
             }
             Column columnAnnotation = declaredField.getDeclaredAnnotation(Column.class);
             var customName = columnAnnotation == null ? null : columnAnnotation.value();
+            String name;
             if (StringUtils.isNotEmpty(customName)) {
                 name = customName;
+            } else {
+                name = declaredField.getName();
             }
             return renameColumnNameByNamingStrategy(name);
+        }
+        Class<? super T> superclass = tClass.getSuperclass();
+        if (superclass != null) {
+            return getIdColumn(superclass);
         }
         throw new NoSuchFieldException("No @Id Annotation found of class " + tClass.getSimpleName());
     }

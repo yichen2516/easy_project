@@ -1,5 +1,6 @@
 package online.lbprotocol.easy.jdbc;
 
+import lombok.val;
 import online.lbprotocol.easy.jdbc.model.TestModel;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +17,12 @@ class EasyDaoTest {
 
     @Resource
     EasyDao easyDao;
+
+    @Test
+    public void get() {
+        val model = easyDao.get(TestModel.class, 1L);
+        System.out.println(model);
+    }
 
     @Test
     public void save() {
