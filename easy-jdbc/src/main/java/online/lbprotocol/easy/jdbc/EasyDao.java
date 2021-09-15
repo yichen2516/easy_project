@@ -7,6 +7,7 @@ import online.lbprotocol.easy.jdbc.builder.DefaultSelectBuilder;
 import online.lbprotocol.easy.jdbc.builder.DefaultUpdateBuilder;
 import online.lbprotocol.easy.jdbc.builder.SelectBuilder;
 import online.lbprotocol.easy.jdbc.builder.UpdateBuilder;
+import online.lbprotocol.easy.jdbc.model.Entity;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -27,6 +28,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.lang.annotation.Annotation;
@@ -51,6 +54,8 @@ public class EasyDao {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     @Resource
     private RelationalMappingContext relationalMappingContext;
+    @Resource
+    private EntityDao entityDao;
 
     public <T> T get(Class<T> type, Object idValue) {
         return get(getTableName(type), new BeanPropertyRowMapper<>(type), getIdColumn(type), idValue);
@@ -214,6 +219,7 @@ public class EasyDao {
         return new PageImpl<>(result, PageRequest.of(selectBuilder.getPageNumber(), selectBuilder.getPageSize()), count);
     }
 
+    @Transactional(propagation = Propagation.SUPPORTS)
     public int update(String tableName, UpdateCondition condition) {
         var updateBuilder = new DefaultUpdateBuilder(tableName);
         condition.condition(updateBuilder);
@@ -222,6 +228,7 @@ public class EasyDao {
     }
 
     @SneakyThrows
+    @Transactional(propagation = Propagation.SUPPORTS)
     public <T> T save(T entity) {
         StringBuilder sb = new StringBuilder("INSERT INTO ");
         sb.append(getTableName(entity.getClass()));
@@ -268,6 +275,11 @@ public class EasyDao {
         var clone = BeanUtils.cloneBean(entity);
         BeanUtils.setProperty(clone, idName, keyHolder.getKey());
         return (T) clone;
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public long save(Entity entity) {
+        return entityDao.saveAndReturn(entity).getId();
     }
 
     @SneakyThrows
