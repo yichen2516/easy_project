@@ -6,6 +6,7 @@ import online.lbprotocol.easy.jdbc.context.OrderContext;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.data.domain.Sort;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,28 +49,28 @@ public class DefaultOrderBuilder implements OrderBuilder<DefaultOrderBuilder> {
 
     @Override
     public Pair<String, Map<String, Object>> build() {
-        var params = new HashMap<String, Object>();
         var sb = new StringBuilder();
 
+        boolean hasOrder = false;
         if (getContext().getAsc() != null) {
             getContext().getAsc().forEach(v -> {
-                sb.append(":asc_").append(v).append(" ASC, ");
-                params.put(":asc_" + v, v);
+                sb.append(v).append(" ASC, ");
             });
+            hasOrder = true;
         }
 
         if (getContext().getDesc() != null) {
             getContext().getDesc().forEach(v -> {
-                sb.append(":asc_").append(v).append(" DESC, ");
-                params.put(":asc_" + v, v);
+                sb.append(v).append(" DESC, ");
             });
+            hasOrder = true;
         }
 
-        if (params.size() != 0) {
+        if (hasOrder) {
             sb.insert(0, "ORDER BY ");
             sb.delete(sb.length() - 2, sb.length());
         }
 
-        return Pair.of(sb.toString(), params);
+        return Pair.of(sb.toString(), Collections.emptyMap());
     }
 }
