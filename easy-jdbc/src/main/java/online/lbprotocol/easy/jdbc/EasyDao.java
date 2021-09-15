@@ -111,8 +111,19 @@ public class EasyDao {
         return select(type, columnName, columnValue, 0, 1).stream().findFirst().orElse(null);
     }
 
+    public <T> T selectOne(Class<T> type, SelectCondition condition) {
+        return selectOne(getTableName(type), new BeanPropertyRowMapper<>(type), condition);
+    }
+
     public <T> T selectOne(String tableName, RowMapper<T> rowMapper, String columnName, String columnValue) {
         return select(tableName, rowMapper, columnName, columnValue, 0, 1).stream().findFirst().orElse(null);
+    }
+
+    public <T> T selectOne(String tableName, RowMapper<T> rowMapper, SelectCondition condition) {
+        var selectBuilder = new DefaultSelectBuilder(tableName);
+        condition.condition(selectBuilder);
+        selectBuilder.page(0, 1);
+        return select(tableName, rowMapper, condition).stream().findFirst().orElse(null);
     }
 
     public <T> List<T> select(Class<T> type) {
@@ -217,6 +228,11 @@ public class EasyDao {
 
         List<T> result = select(tableName, rowMapper, condition, columns);
         return new PageImpl<>(result, PageRequest.of(selectBuilder.getPageNumber(), selectBuilder.getPageSize()), count);
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public <T> int update(Class<T> type, UpdateCondition condition) {
+        return update(getTableName(type), condition);
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)
