@@ -21,6 +21,13 @@ class EasyDaoTest {
     EasyDao easyDao;
 
     @Test
+    public void delete() {
+//        int row = easyDao.delete(TestModel.class, builder -> builder.where("id", 1));
+//        System.out.println(row);
+        easyDao.delete(TestModel.class, 2);
+    }
+
+    @Test
     public void select() {
         List<TestModel> select = easyDao.select(TestModel.class, b -> b
                 .orderBy("the_integer", Sort.Direction.DESC)

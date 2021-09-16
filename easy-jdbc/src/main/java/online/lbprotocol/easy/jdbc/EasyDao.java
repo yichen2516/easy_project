@@ -3,10 +3,7 @@ package online.lbprotocol.easy.jdbc;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.var;
-import online.lbprotocol.easy.jdbc.builder.DefaultSelectBuilder;
-import online.lbprotocol.easy.jdbc.builder.DefaultUpdateBuilder;
-import online.lbprotocol.easy.jdbc.builder.SelectBuilder;
-import online.lbprotocol.easy.jdbc.builder.UpdateBuilder;
+import online.lbprotocol.easy.jdbc.builder.*;
 import online.lbprotocol.easy.jdbc.model.Entity;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -298,6 +295,32 @@ public class EasyDao {
         return entityDao.saveAndReturn(entity).getId();
     }
 
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public <T> int delete(Class<T> type, Object idValue) {
+        return delete(getTableName(type), getIdColumn(type), idValue);
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public <T> int delete(Class<T> type, DeleteCondition condition) {
+        DefaultDeleteBuilder builder = new DefaultDeleteBuilder(getTableName(type));
+        condition.condition(builder);
+        Pair<String, Map<String, Object>> build = builder.build();
+        return namedParameterJdbcTemplate.update(build.getLeft(), build.getRight());
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public int delete(String tableName, String idColumn, Object idValue) {
+        return delete(tableName, b -> b.where(idColumn, idValue));
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public int delete(String tableName, DeleteCondition condition) {
+        DefaultDeleteBuilder builder = new DefaultDeleteBuilder(tableName);
+        condition.condition(builder);
+        Pair<String, Map<String, Object>> build = builder.build();
+        return namedParameterJdbcTemplate.update(build.getLeft(), build.getRight());
+    }
+
     @SneakyThrows
     public <T> String getIdColumn(Class<T> tClass) {
         for (var declaredField : tClass.getDeclaredFields()) {
@@ -537,6 +560,10 @@ public class EasyDao {
 
     public interface SelectCondition {
         void condition(SelectBuilder builder);
+    }
+
+    public interface DeleteCondition {
+        void condition(DeleteBuilder builder);
     }
 
     public interface UpdateCondition {
