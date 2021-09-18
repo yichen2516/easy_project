@@ -24,7 +24,15 @@ class EasyDaoTest {
     public void delete() {
 //        int row = easyDao.delete(TestModel.class, builder -> builder.where("id", 1));
 //        System.out.println(row);
-        easyDao.delete(TestModel.class, 2);
+        easyDao.delete(TestModel.class, 3);
+    }
+
+    @Test
+    public void testUpdate() {
+        val model = easyDao.get(TestModel.class, 3);
+        model.setTheString("New3");
+        model.setTheFloat(2.133f);
+        easyDao.update(model);
     }
 
     @Test
@@ -37,7 +45,7 @@ class EasyDaoTest {
 
     @Test
     public void get() {
-        val model = easyDao.get(TestModel.class, 1L);
+        val model = easyDao.get(TestModel.class, 3L);
         System.out.println(model);
     }
 

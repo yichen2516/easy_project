@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 @ToString
 public class TestModel extends BaseModel{
 
+    public static final String FOO = "asdf";
 
     private String theString;
     private int theInteger;

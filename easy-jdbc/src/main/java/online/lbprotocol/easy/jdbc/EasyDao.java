@@ -2,6 +2,7 @@ package online.lbprotocol.easy.jdbc;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
+import lombok.val;
 import lombok.var;
 import online.lbprotocol.easy.jdbc.builder.*;
 import online.lbprotocol.easy.jdbc.model.Entity;
@@ -32,10 +33,7 @@ import javax.annotation.Resource;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author yichen for easy_project
@@ -227,6 +225,31 @@ public class EasyDao {
         return new PageImpl<>(result, PageRequest.of(selectBuilder.getPageNumber(), selectBuilder.getPageSize()), count);
     }
 
+    @SneakyThrows
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public <T> int update(T model) {
+        String idColumn = getIdColumn(model.getClass());
+        Object idValue = null;
+        List<Field> propertyFields = getPropertyFields(model);
+        Map<String, Object> updateValues = new HashMap<>();
+        for (Field pf : propertyFields) {
+            if (pf.isAnnotationPresent(Transient.class)) continue;
+
+            String name = pf.getName();
+            String property = BeanUtils.getProperty(model, name);
+            if (name.equals(idColumn)) {
+                idValue = property;
+            } else {
+                updateValues.put(renameColumnNameByNamingStrategy(getColumnName(pf)), property);
+            }
+        }
+        if (idValue == null) {
+            throw new NullPointerException();
+        }
+        Object finalIdValue = idValue;
+        return update(model.getClass(), b -> b.where(idColumn, finalIdValue).set(updateValues));
+    }
+
     @Transactional(propagation = Propagation.SUPPORTS)
     public <T> int update(Class<T> type, UpdateCondition condition) {
         return update(getTableName(type), condition);
@@ -259,9 +282,8 @@ public class EasyDao {
             } catch (NoSuchFieldException e) {
                 continue;
             }
-            if (declaredField.getDeclaredAnnotation(Transient.class) != null) {
-                continue;
-            }
+            if (declaredField.isAnnotationPresent(Transient.class)) continue;
+
             if (declaredField.getDeclaredAnnotation(Id.class) != null) {
                 isId = true;
             }
@@ -324,9 +346,8 @@ public class EasyDao {
     @SneakyThrows
     public <T> String getIdColumn(Class<T> tClass) {
         for (var declaredField : tClass.getDeclaredFields()) {
-            if (declaredField.getDeclaredAnnotation(Id.class) == null) {
-                continue;
-            }
+            if (!declaredField.isAnnotationPresent(Id.class)) continue;
+
             Column columnAnnotation = declaredField.getDeclaredAnnotation(Column.class);
             var customName = columnAnnotation == null ? null : columnAnnotation.value();
             String name;
@@ -350,6 +371,31 @@ public class EasyDao {
             return ParsingUtils.reconcatenateCamelCase(tClass.getSimpleName(), "_");
         }
         return table.value();
+    }
+
+    private String getColumnName(Field field) {
+        Column declaredAnnotation = field.getDeclaredAnnotation(Column.class);
+        if (declaredAnnotation == null) {
+            return field.getName();
+        }
+        String value = declaredAnnotation.value();
+        if (StringUtils.isBlank(value)) {
+            return field.getName();
+        }
+        return value;
+    }
+
+    private <T> List<Field> getPropertyFields(T t) {
+        List<Field> fields = new ArrayList<>();
+        val ps = new BeanPropertySqlParameterSource(t);
+        for (String rp : ps.getReadablePropertyNames()) {
+            try {
+                val f = getDeclaredField(t.getClass(), rp);
+                fields.add(f);
+            } catch (NoSuchFieldException ignored) {
+            }
+        }
+        return fields;
     }
 
     private Field getDeclaredField(Class<?> t, String name) throws NoSuchFieldException {
