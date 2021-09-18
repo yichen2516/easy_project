@@ -28,6 +28,14 @@ class EasyDaoTest {
     }
 
     @Test
+    public void testSaveOrUpdate() {
+        TestModel testModel = new TestModel();
+        testModel.setId(5);
+        testModel.setTheString("sdf");
+        easyDao.saveOrUpdate(testModel);
+    }
+
+    @Test
     public void testUpdate() {
         val model = easyDao.get(TestModel.class, 3);
         model.setTheString("New3");

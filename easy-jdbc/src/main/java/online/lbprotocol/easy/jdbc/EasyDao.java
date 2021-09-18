@@ -227,16 +227,16 @@ public class EasyDao {
 
     @SneakyThrows
     @Transactional(propagation = Propagation.SUPPORTS)
-    public <T> int update(T model) {
-        String idColumn = getIdColumn(model.getClass());
+    public <T> int update(T entity) {
+        String idColumn = getIdColumn(entity.getClass());
         Object idValue = null;
-        List<Field> propertyFields = getPropertyFields(model);
+        List<Field> propertyFields = getPropertyFields(entity);
         Map<String, Object> updateValues = new HashMap<>();
         for (Field pf : propertyFields) {
             if (pf.isAnnotationPresent(Transient.class)) continue;
 
             String name = pf.getName();
-            String property = BeanUtils.getProperty(model, name);
+            String property = BeanUtils.getProperty(entity, name);
             if (name.equals(idColumn)) {
                 idValue = property;
             } else {
@@ -247,7 +247,7 @@ public class EasyDao {
             throw new NullPointerException();
         }
         Object finalIdValue = idValue;
-        return update(model.getClass(), b -> b.where(idColumn, finalIdValue).set(updateValues));
+        return update(entity.getClass(), b -> b.where(idColumn, finalIdValue).set(updateValues));
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)
@@ -261,6 +261,23 @@ public class EasyDao {
         condition.condition(updateBuilder);
         Pair<String, Map<String, Object>> build = updateBuilder.build();
         return namedParameterJdbcTemplate.update(build.getLeft(), build.getRight());
+    }
+
+    @SneakyThrows
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public <T> T saveOrUpdate(T entity) {
+        String idColumn = getIdColumn(entity.getClass());
+        String idValue = BeanUtils.getProperty(entity, idColumn);
+        if (StringUtils.isNotBlank(idValue) && !"0".equals(idValue)) {
+            int update = update(entity);
+            if (update == 1) {
+                return entity;
+            } else {
+                throw new Error("No such entity.");
+            }
+        } else {
+            return save(entity);
+        }
     }
 
     @SneakyThrows
