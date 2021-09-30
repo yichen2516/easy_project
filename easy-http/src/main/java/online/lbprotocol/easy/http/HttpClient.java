@@ -1,7 +1,7 @@
 package online.lbprotocol.easy.http;
 
 import okhttp3.*;
-import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.collections.MapUtils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -76,14 +76,8 @@ public class HttpClient {
     }
 
     private HttpResponse doRequest(Request request, String body) throws IOException {
-        Response response = null;
-        try {
-            response = client.newCall(request).execute();
+        try (Response response = client.newCall(request).execute()) {
             return new HttpResponse(request, body, response);
-        } finally {
-            if (response != null) {
-                response.close();
-            }
         }
     }
 
