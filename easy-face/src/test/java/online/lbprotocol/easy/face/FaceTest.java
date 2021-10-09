@@ -9,6 +9,8 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -17,6 +19,20 @@ import java.util.*;
  */
 @SpringBootTest
 public class FaceTest {
+
+    @Test
+    public void foo() throws UnsupportedEncodingException {
+        FaceEngine faceEngine = FaceUtils.getFaceEngine();
+        faceEngine = FaceUtils.initImageFaceEngine(faceEngine);
+        FaceFeature f1 = FaceUtils.extractFaceFeature(faceEngine, "/home/yichen/Developer/easy_project/easy-face/src/test/java/online/lbprotocol/easy/face/m30.jpeg");
+        FaceFeature f2 = FaceUtils.extractFaceFeature(faceEngine, "/home/yichen/Developer/easy_project/easy-face/src/test/java/online/lbprotocol/easy/face/m31.jpeg");
+        String s1 = Base64.getEncoder().encodeToString(f1.getFeatureData());
+        System.out.println(s1);
+        String s2 = Base64.getEncoder().encodeToString(f2.getFeatureData());
+        System.out.println(s2);
+        FaceSimilar faceSimilar = FaceUtils.compareFaceFeature(faceEngine, new FaceFeature(Base64.getDecoder().decode(s1)), new FaceFeature(Base64.getDecoder().decode(s2)));
+        System.out.println(faceSimilar.getScore());
+    }
 
     @SneakyThrows
     @Test
