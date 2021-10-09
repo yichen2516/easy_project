@@ -21,7 +21,7 @@ import static com.arcsoft.face.toolkit.ImageFactory.getRGBData;
  * @since 2021/10/9
  */
 @Slf4j
-public final class FaceEngineInitializer {
+public final class FaceUtils {
 
     private static final String APP_ID = "55x9ni5FC51J77jdaZRzE3bXuhaeora4z6R7wahfsqkt";
     private static final String SDK_KEY = "8NAvG4VFr6FcSo9Zs7nApxfhXGWrSfeX1cPcV64zYD4k";
@@ -51,7 +51,7 @@ public final class FaceEngineInitializer {
             }
             log.info("Writing " + libFile.getAbsolutePath());
 
-            InputStream classFileStream = FaceEngineInitializer.class.getClassLoader()
+            InputStream classFileStream = FaceUtils.class.getClassLoader()
                     .getResourceAsStream("libs/LINUX64/" + libName);
             FileOutputStream fos = new FileOutputStream(LIB_PATH + "/" + libName);
             byte[] bytes = new byte[1024];

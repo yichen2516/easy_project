@@ -14,7 +14,7 @@ public class FaceTest {
     @SneakyThrows
     @Test
     public void test() {
-        FaceEngineInitializer.prepareLibFiles();
-        FaceEngineInitializer.getFaceEngine();
+        FaceUtils.prepareLibFiles();
+        FaceUtils.getFaceEngine();
     }
 }
