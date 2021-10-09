@@ -151,6 +151,16 @@ public final class FaceUtils {
         return faceSimilar;
     }
 
+    public static FaceSimilar compareFaceFeature(FaceEngine faceEngine, FaceFeature sourceFeature, FaceFeature targetFeature) {
+        FaceSimilar faceSimilar = new FaceSimilar();
+        int errorCode = faceEngine.compareFaceFeature(sourceFeature, targetFeature, faceSimilar);
+        if (errorCode != ErrorInfo.MOK.getValue()) {
+            log.error("Detect face error " + errorCode);
+            return null;
+        }
+        return faceSimilar;
+    }
+
     public static ImageInfo getImageInfo(String imageUrl) {
         return getRGBData(new File(imageUrl));
     }
