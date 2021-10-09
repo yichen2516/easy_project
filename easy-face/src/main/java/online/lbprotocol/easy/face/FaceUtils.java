@@ -19,8 +19,10 @@ import java.util.List;
 import static com.arcsoft.face.toolkit.ImageFactory.getRGBData;
 
 /**
+ * The type Face utils.
+ *
  * @author yichen for arcface-test
- * @since 2021/10/9
+ * @since 2021 /10/9
  */
 @Slf4j
 public final class FaceUtils {
@@ -35,6 +37,11 @@ public final class FaceUtils {
         LIB_PATH = System.getProperty("user.home") + "/face_recognition_so";
     }
 
+    /**
+     * 将链接库文件拷贝到用户根目录
+     *
+     * @throws IOException the io exception
+     */
     public static void prepareLibFiles() throws IOException {
         File libDir = new File(LIB_PATH);
         if (!libDir.isDirectory()) {
@@ -69,6 +76,13 @@ public final class FaceUtils {
         log.info("Face library write complete!");
     }
 
+    /**
+     * 构建并联网激活一个FaceEngine
+     * <p>
+     * 如果要多线程调用，确保每个线程激活一个新的FaceEngine。激活后需要初始化引擎{@link #initImageFaceEngine(FaceEngine)}
+     *
+     * @return the face engine
+     */
     public static synchronized FaceEngine getFaceEngine() {
         FaceEngine fe = new FaceEngine(LIB_PATH);
         int errorCode = fe.activeOnline(APP_ID, SDK_KEY);
@@ -80,6 +94,12 @@ public final class FaceUtils {
         return fe;
     }
 
+    /**
+     * 初始化图像处理引擎
+     *
+     * @param faceEngine the face engine
+     * @return the face engine
+     */
     public static FaceEngine initImageFaceEngine(FaceEngine faceEngine) {
         //引擎配置
         EngineConfiguration engineConfiguration = new EngineConfiguration();
@@ -108,6 +128,13 @@ public final class FaceUtils {
         return faceEngine;
     }
 
+    /**
+     * 从图像中查询人脸信息
+     *
+     * @param faceEngine the face engine
+     * @param imageUrl   the image url
+     * @return the pair
+     */
     public static Pair<ImageInfo, List<FaceInfo>> detectFaces(FaceEngine faceEngine, String imageUrl) {
         ImageInfo imageInfo = getImageInfo(imageUrl);
         List<FaceInfo> faceInfoList = new ArrayList<>();
@@ -119,6 +146,13 @@ public final class FaceUtils {
         return new Pair<>(imageInfo, faceInfoList);
     }
 
+    /**
+     * 从图像中提取人脸特征
+     *
+     * @param faceEngine the face engine
+     * @param imageUrl   the image url
+     * @return the face feature
+     */
     public static FaceFeature extractFaceFeature(FaceEngine faceEngine, String imageUrl) {
         Pair<ImageInfo, List<FaceInfo>> faceResult = detectFaces(faceEngine, imageUrl);
         if (faceResult == null) {
@@ -140,6 +174,13 @@ public final class FaceUtils {
         return faceFeature;
     }
 
+    /**
+     * 从图像中提取人脸特征并编码成 Base64 字符串，方便存储
+     *
+     * @param faceEngine the face engine
+     * @param imageUrl   the image url
+     * @return the string
+     */
     public static String extractFaceFeatureToBase64(FaceEngine faceEngine, String imageUrl) {
         FaceFeature faceFeature = extractFaceFeature(faceEngine, imageUrl);
         if (faceFeature == null) {
@@ -148,11 +189,25 @@ public final class FaceUtils {
         return Base64.getEncoder().encodeToString(faceFeature.getFeatureData());
     }
 
+    /**
+     * 从 Base64 编码的人脸特征构造一个特征对象
+     *
+     * @param base64 the base 64
+     * @return the face feature
+     */
     public static FaceFeature decodeFaceFeatureFromBase64(String base64) {
         return new FaceFeature(Base64.getDecoder().decode(base64));
     }
 
 
+    /**
+     * 比对两个图片的人脸相似度，建议评分 > 0.66 的认为是同一人
+     *
+     * @param faceEngine     the face engine
+     * @param sourceImageUrl the source image url
+     * @param targetImageUrl the target image url
+     * @return the face similar
+     */
     public static FaceSimilar compareFaceFeature(FaceEngine faceEngine, String sourceImageUrl, String targetImageUrl) {
         FaceFeature f1 = extractFaceFeature(faceEngine, sourceImageUrl);
         if (f1 == null) {
@@ -163,7 +218,7 @@ public final class FaceUtils {
             return null;
         }
         FaceSimilar faceSimilar = new FaceSimilar();
-        int errorCode = faceEngine.compareFaceFeature(f1, f2, CompareModel.LIFE_PHOTO,faceSimilar);
+        int errorCode = faceEngine.compareFaceFeature(f1, f2, CompareModel.LIFE_PHOTO, faceSimilar);
         if (errorCode != ErrorInfo.MOK.getValue()) {
             log.error("Compare face error " + errorCode + ". " + sourceImageUrl + ";" + targetImageUrl);
             return null;
@@ -171,9 +226,17 @@ public final class FaceUtils {
         return faceSimilar;
     }
 
+    /**
+     * 比对两个特征的人脸相似度，建议评分 > 0.66 的认为是同一人
+     *
+     * @param faceEngine    the face engine
+     * @param sourceFeature the source feature
+     * @param targetFeature the target feature
+     * @return the face similar
+     */
     public static FaceSimilar compareFaceFeature(FaceEngine faceEngine, FaceFeature sourceFeature, FaceFeature targetFeature) {
         FaceSimilar faceSimilar = new FaceSimilar();
-        int errorCode = faceEngine.compareFaceFeature(sourceFeature, targetFeature,CompareModel.LIFE_PHOTO, faceSimilar);
+        int errorCode = faceEngine.compareFaceFeature(sourceFeature, targetFeature, CompareModel.LIFE_PHOTO, faceSimilar);
         if (errorCode != ErrorInfo.MOK.getValue()) {
             log.error("Compare face error " + errorCode + ". ");
             return null;
@@ -181,7 +244,11 @@ public final class FaceUtils {
         return faceSimilar;
     }
 
-    public static ImageInfo getImageInfo(String imageUrl) {
+    /**
+     * @param imageUrl the image url
+     * @return the image info
+     */
+    private static ImageInfo getImageInfo(String imageUrl) {
         return getRGBData(new File(imageUrl));
     }
 }
