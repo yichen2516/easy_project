@@ -1,6 +1,7 @@
 package online.lbprotocol.easy.face;
 
 import com.arcsoft.face.*;
+import com.arcsoft.face.enums.CompareModel;
 import com.arcsoft.face.enums.DetectMode;
 import com.arcsoft.face.enums.DetectOrient;
 import com.arcsoft.face.enums.ErrorInfo;
@@ -82,9 +83,9 @@ public final class FaceUtils {
         //引擎配置
         EngineConfiguration engineConfiguration = new EngineConfiguration();
         engineConfiguration.setDetectMode(DetectMode.ASF_DETECT_MODE_IMAGE);
-        engineConfiguration.setDetectFaceOrientPriority(DetectOrient.ASF_OP_ALL_OUT);
+        engineConfiguration.setDetectFaceOrientPriority(DetectOrient.ASF_OP_0_ONLY);
         engineConfiguration.setDetectFaceMaxNum(10);
-        engineConfiguration.setDetectFaceScaleVal(16);
+        engineConfiguration.setDetectFaceScaleVal(32);
 
         //功能配置
         FunctionConfiguration functionConfiguration = new FunctionConfiguration();
@@ -111,7 +112,7 @@ public final class FaceUtils {
         List<FaceInfo> faceInfoList = new ArrayList<>();
         int errorCode = faceEngine.detectFaces(imageInfo.getImageData(), imageInfo.getWidth(), imageInfo.getHeight(), imageInfo.getImageFormat(), faceInfoList);
         if (errorCode != ErrorInfo.MOK.getValue()) {
-            log.error("Detect face error " + errorCode);
+            log.error("Detect face error " + errorCode + ". " + imageUrl);
             return null;
         }
         return new Pair<>(imageInfo, faceInfoList);
@@ -125,9 +126,14 @@ public final class FaceUtils {
         ImageInfo imageInfo = faceResult.left;
         List<FaceInfo> faceInfoList = faceResult.right;
         FaceFeature faceFeature = new FaceFeature();
-        int errorCode = faceEngine.extractFaceFeature(imageInfo.getImageData(), imageInfo.getWidth(), imageInfo.getHeight(), imageInfo.getImageFormat(), faceInfoList.get(0), faceFeature);
+        FaceInfo faceInfo = faceInfoList.stream().findFirst().orElse(null);
+        if (faceInfo == null) {
+            log.error("Extract face error. No face found." + imageUrl);
+            return null;
+        }
+        int errorCode = faceEngine.extractFaceFeature(imageInfo.getImageData(), imageInfo.getWidth(), imageInfo.getHeight(), imageInfo.getImageFormat(), faceInfo, faceFeature);
         if (errorCode != ErrorInfo.MOK.getValue()) {
-            log.error("Detect face error " + errorCode);
+            log.error("Extract face error " + errorCode + ". " + imageUrl);
             return null;
         }
         return faceFeature;
@@ -143,9 +149,9 @@ public final class FaceUtils {
             return null;
         }
         FaceSimilar faceSimilar = new FaceSimilar();
-        int errorCode = faceEngine.compareFaceFeature(f1, f2, faceSimilar);
+        int errorCode = faceEngine.compareFaceFeature(f1, f2, CompareModel.LIFE_PHOTO,faceSimilar);
         if (errorCode != ErrorInfo.MOK.getValue()) {
-            log.error("Detect face error " + errorCode);
+            log.error("Compare face error " + errorCode + ". " + sourceImageUrl + ";" + targetImageUrl);
             return null;
         }
         return faceSimilar;
@@ -153,9 +159,9 @@ public final class FaceUtils {
 
     public static FaceSimilar compareFaceFeature(FaceEngine faceEngine, FaceFeature sourceFeature, FaceFeature targetFeature) {
         FaceSimilar faceSimilar = new FaceSimilar();
-        int errorCode = faceEngine.compareFaceFeature(sourceFeature, targetFeature, faceSimilar);
+        int errorCode = faceEngine.compareFaceFeature(sourceFeature, targetFeature,CompareModel.LIFE_PHOTO, faceSimilar);
         if (errorCode != ErrorInfo.MOK.getValue()) {
-            log.error("Detect face error " + errorCode);
+            log.error("Compare face error " + errorCode + ". ");
             return null;
         }
         return faceSimilar;
