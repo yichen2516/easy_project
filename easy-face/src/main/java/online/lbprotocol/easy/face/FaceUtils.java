@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import static com.arcsoft.face.toolkit.ImageFactory.getRGBData;
@@ -138,6 +139,19 @@ public final class FaceUtils {
         }
         return faceFeature;
     }
+
+    public static String extractFaceFeatureToBase64(FaceEngine faceEngine, String imageUrl) {
+        FaceFeature faceFeature = extractFaceFeature(faceEngine, imageUrl);
+        if (faceFeature == null) {
+            return null;
+        }
+        return Base64.getEncoder().encodeToString(faceFeature.getFeatureData());
+    }
+
+    public static FaceFeature decodeFaceFeatureFromBase64(String base64) {
+        return new FaceFeature(Base64.getDecoder().decode(base64));
+    }
+
 
     public static FaceSimilar compareFaceFeature(FaceEngine faceEngine, String sourceImageUrl, String targetImageUrl) {
         FaceFeature f1 = extractFaceFeature(faceEngine, sourceImageUrl);
