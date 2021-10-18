@@ -23,44 +23,68 @@ public class DefaultUpdateBuilder implements UpdateBuilder {
     }
 
     @Override
-    public UpdateBuilder set(String property, Object value) {
+    public DefaultUpdateBuilder set(String property, Object value) {
         setBuilder.set(property, value);
         return this;
     }
 
     @Override
-    public UpdateBuilder set(Map<String, Object> values) {
+    public DefaultUpdateBuilder set(Map<String, Object> values) {
         setBuilder.set(values);
         return this;
     }
 
     @Override
-    public UpdateBuilder where(String property, Object value) {
+    public DefaultUpdateBuilder where(String property, Object value) {
         whereBuilder.where(property, value);
         return this;
     }
 
     @Override
-    public UpdateBuilder where(Map<String, Object> conditions) {
+    public DefaultUpdateBuilder where(Map<String, Object> conditions) {
         whereBuilder.where(conditions);
         return this;
     }
 
     @Override
-    public UpdateBuilder whereGreaterThan(String property, Object value) {
+    public DefaultUpdateBuilder whereGreaterThan(String property, Object value) {
         whereBuilder.whereGreaterThan(property, value);
         return this;
     }
 
     @Override
-    public UpdateBuilder whereLessThan(String property, Object value) {
+    public DefaultUpdateBuilder whereLessThan(String property, Object value) {
         whereBuilder.whereLessThan(property, value);
         return this;
     }
 
     @Override
-    public UpdateBuilder whereLike(String property, Object value) {
+    public DefaultUpdateBuilder whereLike(String property, Object value) {
         whereBuilder.whereLike(property, value);
+        return this;
+    }
+
+    @Override
+    public DefaultUpdateBuilder whereIf(boolean condition, String property, Object value) {
+        if (condition) return where(property, value);
+        return this;
+    }
+
+    @Override
+    public DefaultUpdateBuilder whereGreaterThanIf(boolean condition, String property, Object value) {
+        if (condition) return whereGreaterThan(property, value);
+        return this;
+    }
+
+    @Override
+    public DefaultUpdateBuilder whereLessThanIf(boolean condition, String property, Object value) {
+        if (condition) return whereLessThan(property, value);
+        return this;
+    }
+
+    @Override
+    public DefaultUpdateBuilder whereLikeIf(boolean condition, String property, Object value) {
+        if (condition) return whereLike(property, value);
         return this;
     }
 

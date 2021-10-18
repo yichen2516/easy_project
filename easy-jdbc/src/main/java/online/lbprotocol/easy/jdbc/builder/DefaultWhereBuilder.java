@@ -48,6 +48,30 @@ public class DefaultWhereBuilder implements WhereBuilder<DefaultWhereBuilder> {
     }
 
     @Override
+    public DefaultWhereBuilder whereIf(boolean condition, String property, Object value) {
+        if (condition) return where(property, value);
+        return this;
+    }
+
+    @Override
+    public DefaultWhereBuilder whereGreaterThanIf(boolean condition, String property, Object value) {
+        if (condition) return whereGreaterThan(property, value);
+        return this;
+    }
+
+    @Override
+    public DefaultWhereBuilder whereLessThanIf(boolean condition, String property, Object value) {
+        if (condition) return whereLessThan(property, value);
+        return this;
+    }
+
+    @Override
+    public DefaultWhereBuilder whereLikeIf(boolean condition, String property, Object value) {
+        if (condition) return whereLike(property, value);
+        return this;
+    }
+
+    @Override
     public Pair<String, Map<String, Object>> build() {
         var params = new HashMap<String, Object>();
         var sb = new StringBuilder();

@@ -110,7 +110,7 @@ public class EasyDao {
         return selectOne(getTableName(type), new BeanPropertyRowMapper<>(type), condition);
     }
 
-    public <T> T selectOne(String tableName, RowMapper<T> rowMapper, String columnName, String columnValue) {
+    public <T> T selectOne(String tableName, RowMapper<T> rowMapper, String columnName, Object columnValue) {
         return select(tableName, rowMapper, columnName, columnValue, 0, 1).stream().findFirst().orElse(null);
     }
 
@@ -126,7 +126,7 @@ public class EasyDao {
         });
     }
 
-    public <T> List<T> select(Class<T> type, String columnName, String columnValue, int pageNumber, int pageSize) {
+    public <T> List<T> select(Class<T> type, String columnName, Object columnValue, int pageNumber, int pageSize) {
         return select(type, b -> {
             b.where(columnName, columnValue).page(pageNumber, pageSize);
         });
@@ -145,7 +145,7 @@ public class EasyDao {
         });
     }
 
-    public <T> List<T> select(String tableName, RowMapper<T> rowMapper, String columnName, String columnValue, int pageNumber, int pageSize) {
+    public <T> List<T> select(String tableName, RowMapper<T> rowMapper, String columnName, Object columnValue, int pageNumber, int pageSize) {
         return select(tableName, rowMapper, b -> {
             b.where(columnName, columnValue).page(pageNumber, pageSize);
         });

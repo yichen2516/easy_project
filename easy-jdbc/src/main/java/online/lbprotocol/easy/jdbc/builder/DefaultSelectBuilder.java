@@ -36,55 +36,79 @@ public class DefaultSelectBuilder implements SelectBuilder {
     }
 
     @Override
-    public SelectBuilder where(String property, Object value) {
+    public DefaultSelectBuilder where(String property, Object value) {
         whereBuilder.where(property, value);
         return this;
     }
 
     @Override
-    public SelectBuilder where(Map<String, Object> conditions) {
+    public DefaultSelectBuilder where(Map<String, Object> conditions) {
         whereBuilder.where(conditions);
         return this;
     }
 
     @Override
-    public SelectBuilder whereGreaterThan(String property, Object value) {
+    public DefaultSelectBuilder whereGreaterThan(String property, Object value) {
         whereBuilder.whereGreaterThan(property, value);
         return this;
     }
 
     @Override
-    public SelectBuilder whereLessThan(String property, Object value) {
+    public DefaultSelectBuilder whereLessThan(String property, Object value) {
         whereBuilder.whereLessThan(property, value);
         return this;
     }
 
     @Override
-    public SelectBuilder whereLike(String property, Object value) {
+    public DefaultSelectBuilder whereLike(String property, Object value) {
         whereBuilder.whereLike(property, value);
         return this;
     }
 
     @Override
-    public SelectBuilder orderAsc(String property) {
+    public DefaultSelectBuilder whereIf(boolean condition, String property, Object value) {
+        if (condition) return where(property, value);
+        return this;
+    }
+
+    @Override
+    public DefaultSelectBuilder whereGreaterThanIf(boolean condition, String property, Object value) {
+        if (condition) return whereGreaterThan(property, value);
+        return this;
+    }
+
+    @Override
+    public DefaultSelectBuilder whereLessThanIf(boolean condition, String property, Object value) {
+        if (condition) return whereLessThan(property, value);
+        return this;
+    }
+
+    @Override
+    public DefaultSelectBuilder whereLikeIf(boolean condition, String property, Object value) {
+        if (condition) return whereLike(property, value);
+        return this;
+    }
+
+    @Override
+    public DefaultSelectBuilder orderAsc(String property) {
         orderBuilder.orderAsc(property);
         return this;
     }
 
     @Override
-    public SelectBuilder orderDesc(String property) {
+    public DefaultSelectBuilder orderDesc(String property) {
         orderBuilder.orderDesc(property);
         return this;
     }
 
     @Override
-    public SelectBuilder orderBy(String property, Sort.Direction direction) {
+    public DefaultSelectBuilder orderBy(String property, Sort.Direction direction) {
         orderBuilder.orderBy(property, direction);
         return this;
     }
 
     @Override
-    public SelectBuilder orderBy(String property, String direction) {
+    public DefaultSelectBuilder orderBy(String property, String direction) {
         orderBuilder.orderBy(property, direction);
         return this;
     }
