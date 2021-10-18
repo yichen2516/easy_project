@@ -21,6 +21,16 @@ import java.util.*;
 public class FaceTest {
 
     @Test
+    public void t1() {
+        FaceEngine faceEngine = FaceUtils.getFaceEngine();
+        faceEngine = FaceUtils.initImageFaceEngine(faceEngine);
+        FaceSimilar faceSimilar = FaceUtils.compareFaceFeature(faceEngine,
+                "/home/yichen/Developer/easy_project/easy-face/src/test/java/online/lbprotocol/easy/face/test/4.jpg",
+                "/home/yichen/Developer/easy_project/easy-face/src/test/java/online/lbprotocol/easy/face/test/3.jpg");
+        System.out.println(faceSimilar.getScore());
+    }
+
+    @Test
     public void foo() throws UnsupportedEncodingException {
         FaceEngine faceEngine = FaceUtils.getFaceEngine();
         faceEngine = FaceUtils.initImageFaceEngine(faceEngine);
