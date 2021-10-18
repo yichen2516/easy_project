@@ -30,6 +30,12 @@ public class DefaultSetBuilder implements SetBuilder<DefaultSetBuilder> {
     }
 
     @Override
+    public DefaultSetBuilder setIf(boolean condition, String property, Object value) {
+        if (condition) return set(property, value);
+        return this;
+    }
+
+    @Override
     public Pair<String, Map<String, Object>> build() {
         if (getContext().getValues() == null || getContext().getValues().isEmpty()) {
             throw new IllegalArgumentException("Update values must not be empty.");

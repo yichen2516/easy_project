@@ -35,6 +35,12 @@ public class DefaultUpdateBuilder implements UpdateBuilder {
     }
 
     @Override
+    public DefaultUpdateBuilder setIf(boolean condition, String property, Object value) {
+        if (condition) return set(property, value);
+        return this;
+    }
+
+    @Override
     public DefaultUpdateBuilder where(String property, Object value) {
         whereBuilder.where(property, value);
         return this;

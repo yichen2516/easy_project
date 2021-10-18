@@ -12,4 +12,5 @@ public interface SetBuilder<Self> extends SqlBuilder {
 
     Self set(Map<String, Object> values);
 
+    Self setIf(boolean condition, String property, Object value);
 }
