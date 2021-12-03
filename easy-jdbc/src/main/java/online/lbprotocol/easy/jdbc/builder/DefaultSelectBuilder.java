@@ -154,7 +154,7 @@ public class DefaultSelectBuilder implements SelectBuilder {
     @Override
     public Pair<String, Map<String, Object>> buildForCount(String idColumn) {
         var params = new HashMap<String, Object>();
-        var sb = new StringBuilder("SELECT count(").append(idColumn).append(") FROM ").append(tableName);
+        var sb = new StringBuilder("SELECT count(*) FROM ").append(tableName);
 
         Pair<String, Map<String, Object>> where = whereBuilder.build();
         if (StringUtils.isNotBlank(where.getLeft())) {
