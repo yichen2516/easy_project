@@ -32,8 +32,8 @@ public final class HbApiClient {
         header.put("Connection", "keep-alive");
         header.put("Content-Type", "application/x-www-form-urlencoded");
         Map<String, String> body = new HashMap<>();
-        body.put("password", username);
-        body.put("username", password);
+        body.put("username", username);
+        body.put("password", password);
         body.put("scope", "server");
         val response = HttpClient.getDefaultClient().post(BASE_URL + path, header, HttpClient.toQueryString(body));
         if (response.isError()) {
