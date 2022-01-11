@@ -14,6 +14,14 @@ import java.io.UnsupportedEncodingException;
 public class FaceTest {
 
     @Test
+    public void testFaceFeature() {
+        FaceEngine faceEngine = FaceUtils.getFaceEngine();
+        faceEngine = FaceUtils.initImageFaceEngine(faceEngine);
+        FaceFeatureResult faceFeatureResult = FaceUtils.extractFaceFeature(faceEngine, "/home/yichen/Developer/easy_project/easy-face/src/test/java/online/lbprotocol/easy/face/man.png");
+        System.out.println(faceFeatureResult.getAgeInfos().stream().findFirst().get().getAge());
+    }
+
+    @Test
     public void foo() throws UnsupportedEncodingException {
         FaceEngine faceEngine = FaceUtils.getFaceEngine();
         faceEngine = FaceUtils.initImageFaceEngine(faceEngine);
