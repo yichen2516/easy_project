@@ -18,8 +18,7 @@ public class FaceFeatureResult {
     private List<FaceFeature> faceFeatures;
     private List<AgeInfo> ageInfos;
     /**
-     * 0、男性
-     * 1、女性
+     * 未知性别=-1 、男性=0 、女性=1
      */
     private List<GenderInfo> genderInfos;
 }
