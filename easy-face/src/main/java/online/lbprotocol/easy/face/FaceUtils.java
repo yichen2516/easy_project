@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.List;
 
 import static com.arcsoft.face.toolkit.ImageFactory.getRGBData;
@@ -161,8 +162,8 @@ public final class FaceUtils {
 
         ImageInfo imageInfo = faceResult.left;
         List<FaceInfo> faceInfoList = faceResult.right;
-        if (faceInfoList == null || faceInfoList.isEmpty()) {
-            return null;
+        if (faceInfoList.isEmpty()) {
+            return new FaceFeatureResult(Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
         }
 
         List<FaceFeature> features = new ArrayList<>();

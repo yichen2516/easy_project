@@ -17,5 +17,9 @@ import java.util.List;
 public class FaceFeatureResult {
     private List<FaceFeature> faceFeatures;
     private List<AgeInfo> ageInfos;
+    /**
+     * 0、男性
+     * 1、女性
+     */
     private List<GenderInfo> genderInfos;
 }
