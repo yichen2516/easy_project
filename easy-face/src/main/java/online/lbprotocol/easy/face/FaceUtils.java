@@ -153,39 +153,55 @@ public final class FaceUtils {
      * @param imageUrl   the image url
      * @return the face feature
      */
-    public static FaceFeature extractFaceFeature(FaceEngine faceEngine, String imageUrl) {
+    public static FaceFeatureResult extractFaceFeature(FaceEngine faceEngine, String imageUrl) {
         Pair<ImageInfo, List<FaceInfo>> faceResult = detectFaces(faceEngine, imageUrl);
         if (faceResult == null) {
             return null;
         }
+
         ImageInfo imageInfo = faceResult.left;
         List<FaceInfo> faceInfoList = faceResult.right;
-        FaceFeature faceFeature = new FaceFeature();
-        FaceInfo faceInfo = faceInfoList.stream().findFirst().orElse(null);
-        if (faceInfo == null) {
-            log.error("Extract face error. No face found." + imageUrl);
+        if (faceInfoList == null || faceInfoList.isEmpty()) {
             return null;
         }
-        int errorCode = faceEngine.extractFaceFeature(imageInfo.getImageData(), imageInfo.getWidth(), imageInfo.getHeight(), imageInfo.getImageFormat(), faceInfo, faceFeature);
-        if (errorCode != ErrorInfo.MOK.getValue()) {
-            log.error("Extract face error " + errorCode + ". " + imageUrl);
+
+        List<FaceFeature> features = new ArrayList<>();
+        List<AgeInfo> ages = new ArrayList<>();
+        List<GenderInfo> genders = new ArrayList<>();
+
+        for (FaceInfo faceInfo : faceInfoList) {
+            FaceFeature faceFeature = new FaceFeature();
+            int errorCode = faceEngine.extractFaceFeature(imageInfo.getImageData(), imageInfo.getWidth(), imageInfo.getHeight(), imageInfo.getImageFormat(), faceInfo, faceFeature);
+            if (errorCode != ErrorInfo.MOK.getValue()) {
+                log.error("Extract face error " + errorCode + ". " + imageUrl);
+                return null;
+            }
+            features.add(faceFeature);
+        }
+
+        FunctionConfiguration configuration = new FunctionConfiguration();
+        configuration.setSupportAge(true);
+        configuration.setSupportFace3dAngle(true);
+        configuration.setSupportGender(true);
+        configuration.setSupportLiveness(true);
+        int processErrorCode = faceEngine.process(imageInfo.getImageData(), imageInfo.getWidth(), imageInfo.getHeight(), imageInfo.getImageFormat(), faceInfoList, configuration);
+        if (processErrorCode != ErrorInfo.MOK.getValue()) {
+            log.error("Failed to process face." + imageUrl);
             return null;
         }
-        return faceFeature;
+
+        faceEngine.getAge(ages);
+        faceEngine.getGender(genders);
+
+        return new FaceFeatureResult(features, ages, genders);
     }
 
     /**
      * 从图像中提取人脸特征并编码成 Base64 字符串，方便存储
      *
-     * @param faceEngine the face engine
-     * @param imageUrl   the image url
      * @return the string
      */
-    public static String extractFaceFeatureToBase64(FaceEngine faceEngine, String imageUrl) {
-        FaceFeature faceFeature = extractFaceFeature(faceEngine, imageUrl);
-        if (faceFeature == null) {
-            return null;
-        }
+    public static String faceFeatureToBase64(FaceFeature faceFeature) {
         return Base64.getEncoder().encodeToString(faceFeature.getFeatureData());
     }
 
@@ -197,33 +213,6 @@ public final class FaceUtils {
      */
     public static FaceFeature decodeFaceFeatureFromBase64(String base64) {
         return new FaceFeature(Base64.getDecoder().decode(base64));
-    }
-
-
-    /**
-     * 比对两个图片的人脸相似度，建议评分 > 0.66 的认为是同一人
-     *
-     * @param faceEngine     the face engine
-     * @param sourceImageUrl the source image url
-     * @param targetImageUrl the target image url
-     * @return the face similar
-     */
-    public static FaceSimilar compareFaceFeature(FaceEngine faceEngine, String sourceImageUrl, String targetImageUrl) {
-        FaceFeature f1 = extractFaceFeature(faceEngine, sourceImageUrl);
-        if (f1 == null) {
-            return null;
-        }
-        FaceFeature f2 = extractFaceFeature(faceEngine, targetImageUrl);
-        if (f2 == null) {
-            return null;
-        }
-        FaceSimilar faceSimilar = new FaceSimilar();
-        int errorCode = faceEngine.compareFaceFeature(f1, f2, CompareModel.LIFE_PHOTO, faceSimilar);
-        if (errorCode != ErrorInfo.MOK.getValue()) {
-            log.error("Compare face error " + errorCode + ". " + sourceImageUrl + ";" + targetImageUrl);
-            return null;
-        }
-        return faceSimilar;
     }
 
     /**
