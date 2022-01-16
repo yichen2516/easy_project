@@ -24,7 +24,7 @@ public class DefaultSetBuilder implements SetBuilder<DefaultSetBuilder> {
     }
 
     @Override
-    public DefaultSetBuilder set(Map<String, Object> values) {
+    public DefaultSetBuilder set(Map<String, ?> values) {
         getContext().getValuesLazy().putAll(values);
         return this;
     }
@@ -36,7 +36,7 @@ public class DefaultSetBuilder implements SetBuilder<DefaultSetBuilder> {
     }
 
     @Override
-    public Pair<String, Map<String, Object>> build() {
+    public Pair<String, Map<String, ?>> build() {
         if (getContext().getValues() == null || getContext().getValues().isEmpty()) {
             throw new IllegalArgumentException("Update values must not be empty.");
         }

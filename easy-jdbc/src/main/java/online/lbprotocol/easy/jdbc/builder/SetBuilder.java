@@ -10,7 +10,7 @@ public interface SetBuilder<Self> extends SqlBuilder {
 
     Self set(String property, Object value);
 
-    Self set(Map<String, Object> values);
+    Self set(Map<String, ?> values);
 
     Self setIf(boolean condition, String property, Object value);
 }

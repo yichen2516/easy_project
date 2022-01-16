@@ -24,7 +24,7 @@ public class DefaultWhereBuilder implements WhereBuilder<DefaultWhereBuilder> {
     }
 
     @Override
-    public DefaultWhereBuilder where(Map<String, Object> conditions) {
+    public DefaultWhereBuilder where(Map<String, ?> conditions) {
         getContext().getEqualsLazy().putAll(conditions);
         return this;
     }
@@ -72,7 +72,7 @@ public class DefaultWhereBuilder implements WhereBuilder<DefaultWhereBuilder> {
     }
 
     @Override
-    public Pair<String, Map<String, Object>> build() {
+    public Pair<String, Map<String, ?>> build() {
         var params = new HashMap<String, Object>();
         var sb = new StringBuilder();
 

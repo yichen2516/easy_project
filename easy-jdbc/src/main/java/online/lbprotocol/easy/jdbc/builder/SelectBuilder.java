@@ -12,5 +12,5 @@ public interface SelectBuilder extends WhereBuilder<SelectBuilder>, OrderBuilder
 
     void page(int pageNumber, int pageSize);
 
-    Pair<String, Map<String, Object>> buildForCount(String idColumn);
+    Pair<String, Map<String, ?>> buildForCount(String idColumn);
 }

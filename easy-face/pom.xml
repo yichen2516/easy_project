@@ -35,7 +35,6 @@
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>com.arcsoft.face</groupId>
             <artifactId>arcsoft-sdk-face</artifactId>
@@ -44,4 +43,5 @@
             <systemPath>${project.basedir}/src/main/resources/libs/arcsoft-sdk-face-3.0.0.0.jar</systemPath>
         </dependency>
     </dependencies>
+
 </project>

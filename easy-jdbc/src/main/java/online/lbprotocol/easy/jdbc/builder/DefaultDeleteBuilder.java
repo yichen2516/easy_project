@@ -19,10 +19,10 @@ public class DefaultDeleteBuilder implements DeleteBuilder {
     }
 
     @Override
-    public Pair<String, Map<String, Object>> build() {
+    public Pair<String, Map<String, ?>> build() {
         var sb = new StringBuilder("DELETE FROM ").append(tableName);
 
-        Pair<String, Map<String, Object>> where = whereBuilder.build();
+        Pair<String, Map<String, ?>> where = whereBuilder.build();
         if (StringUtils.isNotBlank(where.getLeft())) {
             sb.append(" ").append(where.getLeft());
         }
@@ -36,7 +36,7 @@ public class DefaultDeleteBuilder implements DeleteBuilder {
     }
 
     @Override
-    public DefaultDeleteBuilder where(Map<String, Object> conditions) {
+    public DefaultDeleteBuilder where(Map<String, ?> conditions) {
         whereBuilder.where(conditions);
         return this;
     }

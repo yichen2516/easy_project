@@ -29,7 +29,7 @@ public class DefaultUpdateBuilder implements UpdateBuilder {
     }
 
     @Override
-    public DefaultUpdateBuilder set(Map<String, Object> values) {
+    public DefaultUpdateBuilder set(Map<String, ?> values) {
         setBuilder.set(values);
         return this;
     }
@@ -47,7 +47,7 @@ public class DefaultUpdateBuilder implements UpdateBuilder {
     }
 
     @Override
-    public DefaultUpdateBuilder where(Map<String, Object> conditions) {
+    public DefaultUpdateBuilder where(Map<String, ?> conditions) {
         whereBuilder.where(conditions);
         return this;
     }
@@ -96,15 +96,15 @@ public class DefaultUpdateBuilder implements UpdateBuilder {
 
 
     @Override
-    public Pair<String, Map<String, Object>> build() {
+    public Pair<String, Map<String, ?>> build() {
         var params = new HashMap<String, Object>();
         var sb = new StringBuilder("UPDATE ")
                 .append(tableName);
 
-        Pair<String, Map<String, Object>> set = setBuilder.build();
+        Pair<String, Map<String, ?>> set = setBuilder.build();
         sb.append(" ").append(set.getLeft());
 
-        Pair<String, Map<String, Object>> where = whereBuilder.build();
+        Pair<String, Map<String, ?>> where = whereBuilder.build();
         if (StringUtils.isNotBlank(where.getLeft())) {
             sb.append(" ").append(where.getLeft());
         }

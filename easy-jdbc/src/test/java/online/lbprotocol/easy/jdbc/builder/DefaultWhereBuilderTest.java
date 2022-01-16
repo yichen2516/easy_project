@@ -16,7 +16,7 @@ class DefaultWhereBuilderTest {
     @Test
     void build() {
 
-        Pair<String, Map<String, Object>> build = new DefaultWhereBuilder()
+        Pair<String, Map<String, ?>> build = new DefaultWhereBuilder()
                 .where("equal_1", "equal_value_1")
                 .where("equal_2", "equal_value_2")
                 .whereLessThan("less_1", "less_value_2")

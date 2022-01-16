@@ -10,7 +10,7 @@ public interface WhereBuilder<Self> extends SqlBuilder {
 
     Self where(String property, Object value);
 
-    Self where(Map<String, Object> conditions);
+    Self where(Map<String, ?> conditions);
 
     Self whereGreaterThan(String property, Object value);
 

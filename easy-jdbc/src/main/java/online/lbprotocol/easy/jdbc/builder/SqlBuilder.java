@@ -9,5 +9,5 @@ import java.util.Map;
  * @since 2021/9/1
  */
 public interface SqlBuilder {
-    Pair<String, Map<String, Object>> build();
+    Pair<String, Map<String, ?>> build();
 }

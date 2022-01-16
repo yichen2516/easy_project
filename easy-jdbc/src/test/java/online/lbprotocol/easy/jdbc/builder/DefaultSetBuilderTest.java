@@ -15,7 +15,7 @@ class DefaultSetBuilderTest {
 
     @Test
     void build() {
-        Pair<String, Map<String, Object>> build = new DefaultSetBuilder()
+        Pair<String, Map<String, ?>> build = new DefaultSetBuilder()
                 .set("key1", "value1")
                 .set("key2", "value2")
                 .build();

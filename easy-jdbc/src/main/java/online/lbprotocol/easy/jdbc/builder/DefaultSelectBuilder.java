@@ -42,7 +42,7 @@ public class DefaultSelectBuilder implements SelectBuilder {
     }
 
     @Override
-    public DefaultSelectBuilder where(Map<String, Object> conditions) {
+    public DefaultSelectBuilder where(Map<String, ?> conditions) {
         whereBuilder.where(conditions);
         return this;
     }
@@ -121,7 +121,7 @@ public class DefaultSelectBuilder implements SelectBuilder {
     }
 
     @Override
-    public Pair<String, Map<String, Object>> build() {
+    public Pair<String, Map<String, ?>> build() {
         var params = new HashMap<String, Object>();
         var sb = new StringBuilder("SELECT ");
 
@@ -132,12 +132,12 @@ public class DefaultSelectBuilder implements SelectBuilder {
         }
         sb.append(" FROM ").append(tableName);
 
-        Pair<String, Map<String, Object>> where = whereBuilder.build();
+        Pair<String, Map<String, ?>> where = whereBuilder.build();
         if (StringUtils.isNotBlank(where.getLeft())) {
             sb.append(" ").append(where.getLeft());
         }
 
-        Pair<String, Map<String, Object>> order = orderBuilder.build();
+        Pair<String, Map<String, ?>> order = orderBuilder.build();
         if (StringUtils.isNotBlank(order.getLeft())) {
             sb.append(" ").append(order.getLeft());
         }
@@ -152,16 +152,16 @@ public class DefaultSelectBuilder implements SelectBuilder {
 
 
     @Override
-    public Pair<String, Map<String, Object>> buildForCount(String idColumn) {
+    public Pair<String, Map<String, ?>> buildForCount(String idColumn) {
         var params = new HashMap<String, Object>();
         var sb = new StringBuilder("SELECT count(*) FROM ").append(tableName);
 
-        Pair<String, Map<String, Object>> where = whereBuilder.build();
+        Pair<String, Map<String, ?>> where = whereBuilder.build();
         if (StringUtils.isNotBlank(where.getLeft())) {
             sb.append(" ").append(where.getLeft());
         }
 
-        Pair<String, Map<String, Object>> order = orderBuilder.build();
+        Pair<String, Map<String, ?>> order = orderBuilder.build();
         if (StringUtils.isNotBlank(order.getLeft())) {
             sb.append(" ").append(order.getLeft());
         }

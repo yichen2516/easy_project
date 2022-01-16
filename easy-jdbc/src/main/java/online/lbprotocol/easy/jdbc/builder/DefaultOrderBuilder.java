@@ -48,7 +48,7 @@ public class DefaultOrderBuilder implements OrderBuilder<DefaultOrderBuilder> {
     }
 
     @Override
-    public Pair<String, Map<String, Object>> build() {
+    public Pair<String, Map<String, ?>> build() {
         var sb = new StringBuilder();
 
         boolean hasOrder = false;

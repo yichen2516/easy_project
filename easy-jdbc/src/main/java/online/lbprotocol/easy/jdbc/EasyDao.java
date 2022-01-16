@@ -259,7 +259,7 @@ public class EasyDao {
     public int update(String tableName, UpdateCondition condition) {
         var updateBuilder = new DefaultUpdateBuilder(tableName);
         condition.condition(updateBuilder);
-        Pair<String, Map<String, Object>> build = updateBuilder.build();
+        Pair<String, Map<String, ?>> build = updateBuilder.build();
         return namedParameterJdbcTemplate.update(build.getLeft(), build.getRight());
     }
 
@@ -343,7 +343,7 @@ public class EasyDao {
     public <T> int delete(Class<T> type, DeleteCondition condition) {
         DefaultDeleteBuilder builder = new DefaultDeleteBuilder(getTableName(type));
         condition.condition(builder);
-        Pair<String, Map<String, Object>> build = builder.build();
+        Pair<String, Map<String, ?>> build = builder.build();
         return namedParameterJdbcTemplate.update(build.getLeft(), build.getRight());
     }
 
@@ -356,7 +356,7 @@ public class EasyDao {
     public int delete(String tableName, DeleteCondition condition) {
         DefaultDeleteBuilder builder = new DefaultDeleteBuilder(tableName);
         condition.condition(builder);
-        Pair<String, Map<String, Object>> build = builder.build();
+        Pair<String, Map<String, ?>> build = builder.build();
         return namedParameterJdbcTemplate.update(build.getLeft(), build.getRight());
     }
 
