@@ -3,7 +3,9 @@ package online.lbprotocol.easy.jdbc.context;
 import lombok.Getter;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author yichen for easy_project
@@ -16,6 +18,7 @@ public class WhereContext {
     private Map<String, Object> greater;
     private Map<String, Object> less;
     private Map<String, Object> like;
+    private Map<String, Set<Object>> in;
 
     public Map<String, Object> getEqualsLazy() {
         if (equals == null) {
@@ -43,5 +46,12 @@ public class WhereContext {
             like = new HashMap<>();
         }
         return like;
+    }
+
+    public Map<String, Set<Object>> getInLazy() {
+        if (in == null) {
+            in = new HashMap<>();
+        }
+        return in;
     }
 }

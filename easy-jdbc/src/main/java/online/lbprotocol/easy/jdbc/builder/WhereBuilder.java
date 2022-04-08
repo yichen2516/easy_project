@@ -18,6 +18,8 @@ public interface WhereBuilder<Self> extends SqlBuilder {
 
     Self whereLike(String property, Object value);
 
+    Self whereIn(String property, Object... values);
+
     Self whereIf(boolean condition, String property, Object value);
 
     Self whereGreaterThanIf(boolean condition, String property, Object value);
@@ -25,6 +27,10 @@ public interface WhereBuilder<Self> extends SqlBuilder {
     Self whereLessThanIf(boolean condition, String property, Object value);
 
     Self whereLikeIf(boolean condition, String property, Object value);
+
+    Self whereInIf(boolean condition, String property, Object... values);
+
+
 
 
 }

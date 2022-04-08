@@ -1,17 +1,19 @@
 package online.lbprotocol.easy.jdbc.builder;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import lombok.var;
 import online.lbprotocol.easy.jdbc.context.WhereContext;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author yichen for easy_project
  * @since 2021/8/31
  */
+@Slf4j
 public class DefaultWhereBuilder implements WhereBuilder<DefaultWhereBuilder> {
 
     @Getter(lazy = true)
@@ -48,6 +50,14 @@ public class DefaultWhereBuilder implements WhereBuilder<DefaultWhereBuilder> {
     }
 
     @Override
+    public DefaultWhereBuilder whereIn(String property, Object... values) {
+        Set<Object> set = getContext().getInLazy().getOrDefault(property, new HashSet<>());
+        set.addAll(Arrays.asList(values));
+        getContext().getInLazy().put(property, set);
+        return this;
+    }
+
+    @Override
     public DefaultWhereBuilder whereIf(boolean condition, String property, Object value) {
         if (condition) return where(property, value);
         return this;
@@ -68,6 +78,12 @@ public class DefaultWhereBuilder implements WhereBuilder<DefaultWhereBuilder> {
     @Override
     public DefaultWhereBuilder whereLikeIf(boolean condition, String property, Object value) {
         if (condition) return whereLike(property, value);
+        return this;
+    }
+
+    @Override
+    public DefaultWhereBuilder whereInIf(boolean condition, String property, Object... values) {
+        if (condition) return whereIn(property, values);
         return this;
     }
 
@@ -101,13 +117,28 @@ public class DefaultWhereBuilder implements WhereBuilder<DefaultWhereBuilder> {
                 params.put("wlk_" + k, v);
             });
         }
+        if (getContext().getIn() != null) {
+            getContext().getIn().forEach((k, v) -> {
+                if (v.isEmpty()) return;
+                sb.append(k).append(" IN (");
+                var array = v.toArray();
+                var sqlItemArray = new ArrayList<String>();
+                for (int i = 0; i < array.length; i++) {
+                    sqlItemArray.add(":win_" + k + "_" + i);
+                    Object o = array[i];
+                    params.put("win_" + k + "_" + i, o);
+                }
+                sb.append(String.join(",", sqlItemArray)).append(") AND ");
+            });
+        }
 
         if (!params.isEmpty()) {
             sb.insert(0, "WHERE ");
             sb.delete(sb.length() - 5, sb.length());
         }
 
-
+        log.debug("SQL: {}", sb.toString());
+        log.debug("Params: {}", params);
         return Pair.of(sb.toString(), params);
     }
 }

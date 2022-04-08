@@ -4,6 +4,7 @@ import lombok.val;
 import online.lbprotocol.easy.jdbc.model.TestModel;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 
 import javax.annotation.Resource;
@@ -19,6 +20,13 @@ class EasyDaoTest {
 
     @Resource
     EasyDao easyDao;
+
+    @Test
+    public void whereIn() {
+        Page<TestModel> id = easyDao.selectAndCount(TestModel.class, b -> {
+            b.whereIn("id", 1, 2, 3, 4);
+        });
+    }
 
     @Test
     public void delete() {

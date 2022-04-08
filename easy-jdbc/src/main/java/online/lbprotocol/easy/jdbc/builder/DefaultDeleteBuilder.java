@@ -1,5 +1,6 @@
 package online.lbprotocol.easy.jdbc.builder;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.var;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -10,6 +11,7 @@ import java.util.Map;
  * @author yichen for easy_project
  * @since 2021/9/16
  */
+@Slf4j
 public class DefaultDeleteBuilder implements DeleteBuilder {
     private final DefaultWhereBuilder whereBuilder = new DefaultWhereBuilder();
     private final String tableName;
@@ -26,6 +28,7 @@ public class DefaultDeleteBuilder implements DeleteBuilder {
         if (StringUtils.isNotBlank(where.getLeft())) {
             sb.append(" ").append(where.getLeft());
         }
+        log.debug("SQL: {}", sb.toString());
         return Pair.of(sb.toString(), where.getRight());
     }
 
@@ -60,6 +63,12 @@ public class DefaultDeleteBuilder implements DeleteBuilder {
     }
 
     @Override
+    public DefaultDeleteBuilder whereIn(String property, Object... values) {
+        whereBuilder.whereIn(property, values);
+        return this;
+    }
+
+    @Override
     public DefaultDeleteBuilder whereIf(boolean condition, String property, Object value) {
         if (condition) return where(property, value);
         return this;
@@ -80,6 +89,12 @@ public class DefaultDeleteBuilder implements DeleteBuilder {
     @Override
     public DefaultDeleteBuilder whereLikeIf(boolean condition, String property, Object value) {
         if (condition) return whereLike(property, value);
+        return this;
+    }
+
+    @Override
+    public DefaultDeleteBuilder whereInIf(boolean condition, String property, Object... values) {
+        if (condition) return whereIn(property, values);
         return this;
     }
 

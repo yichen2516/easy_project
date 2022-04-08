@@ -1,6 +1,7 @@
 package online.lbprotocol.easy.jdbc.builder;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import lombok.var;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -13,6 +14,7 @@ import java.util.Map;
  * @author yichen for easy_project
  * @since 2021/8/31
  */
+@Slf4j
 public class DefaultSelectBuilder implements SelectBuilder {
 
     private final DefaultWhereBuilder whereBuilder = new DefaultWhereBuilder();
@@ -66,6 +68,12 @@ public class DefaultSelectBuilder implements SelectBuilder {
     }
 
     @Override
+    public DefaultSelectBuilder whereIn(String property, Object... values) {
+        whereBuilder.whereIn(property, values);
+        return this;
+    }
+
+    @Override
     public DefaultSelectBuilder whereIf(boolean condition, String property, Object value) {
         if (condition) return where(property, value);
         return this;
@@ -86,6 +94,12 @@ public class DefaultSelectBuilder implements SelectBuilder {
     @Override
     public DefaultSelectBuilder whereLikeIf(boolean condition, String property, Object value) {
         if (condition) return whereLike(property, value);
+        return this;
+    }
+
+    @Override
+    public DefaultSelectBuilder whereInIf(boolean condition, String property, Object... values) {
+        if (condition) return whereIn(property, values);
         return this;
     }
 
@@ -147,6 +161,8 @@ public class DefaultSelectBuilder implements SelectBuilder {
         params.putAll(where.getRight());
         params.putAll(order.getRight());
 
+        log.debug("SQL: {}", sb.toString());
+        log.debug("Params: {}", params);
         return Pair.of(sb.toString(), params);
     }
 
@@ -169,6 +185,8 @@ public class DefaultSelectBuilder implements SelectBuilder {
         params.putAll(where.getRight());
         params.putAll(order.getRight());
 
+        log.debug("SQL: {}", sb.toString());
+        log.debug("Params: {}", params);
         return Pair.of(sb.toString(), params);
     }
 }

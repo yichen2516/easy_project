@@ -1,6 +1,7 @@
 package online.lbprotocol.easy.jdbc.builder;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import lombok.var;
 import online.lbprotocol.easy.jdbc.context.SetContext;
 import org.apache.commons.lang3.tuple.Pair;
@@ -12,6 +13,7 @@ import java.util.Map;
  * @author yichen for easy_project
  * @since 2021/9/1
  */
+@Slf4j
 public class DefaultSetBuilder implements SetBuilder<DefaultSetBuilder> {
 
     @Getter(lazy = true)
@@ -54,7 +56,8 @@ public class DefaultSetBuilder implements SetBuilder<DefaultSetBuilder> {
             sb.insert(0, "SET ");
             sb.delete(sb.length() - 2, sb.length());
         }
-
+        log.debug("SQL: {}", sb.toString());
+        log.debug("Params: {}", params);
         return Pair.of(sb.toString(), params);
     }
 }

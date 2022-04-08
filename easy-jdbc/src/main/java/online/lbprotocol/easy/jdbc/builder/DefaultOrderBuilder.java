@@ -1,6 +1,7 @@
 package online.lbprotocol.easy.jdbc.builder;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import lombok.var;
 import online.lbprotocol.easy.jdbc.context.OrderContext;
 import org.apache.commons.lang3.tuple.Pair;
@@ -14,6 +15,7 @@ import java.util.Map;
  * @author yichen for easy_project
  * @since 2021/9/1
  */
+@Slf4j
 public class DefaultOrderBuilder implements OrderBuilder<DefaultOrderBuilder> {
 
     @Getter(lazy = true)
@@ -70,7 +72,7 @@ public class DefaultOrderBuilder implements OrderBuilder<DefaultOrderBuilder> {
             sb.insert(0, "ORDER BY ");
             sb.delete(sb.length() - 2, sb.length());
         }
-
+        log.debug("SQL: {}", sb.toString());
         return Pair.of(sb.toString(), Collections.emptyMap());
     }
 }

@@ -1,5 +1,6 @@
 package online.lbprotocol.easy.jdbc.builder;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.var;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -11,6 +12,7 @@ import java.util.Map;
  * @author yichen for easy_project
  * @since 2021/9/1
  */
+@Slf4j
 public class DefaultUpdateBuilder implements UpdateBuilder {
 
     private final DefaultWhereBuilder whereBuilder = new DefaultWhereBuilder();
@@ -71,6 +73,12 @@ public class DefaultUpdateBuilder implements UpdateBuilder {
     }
 
     @Override
+    public DefaultUpdateBuilder whereIn(String property, Object... values) {
+        whereBuilder.whereIn(property, values);
+        return this;
+    }
+
+    @Override
     public DefaultUpdateBuilder whereIf(boolean condition, String property, Object value) {
         if (condition) return where(property, value);
         return this;
@@ -94,6 +102,12 @@ public class DefaultUpdateBuilder implements UpdateBuilder {
         return this;
     }
 
+    @Override
+    public DefaultUpdateBuilder whereInIf(boolean condition, String property, Object... values) {
+        if (condition) return whereIn(property, values);
+        return this;
+    }
+
 
     @Override
     public Pair<String, Map<String, ?>> build() {
@@ -112,6 +126,8 @@ public class DefaultUpdateBuilder implements UpdateBuilder {
         params.putAll(set.getRight());
         params.putAll(where.getRight());
 
+        log.debug("SQL: {}", sb.toString());
+        log.debug("Params: {}", params);
         return Pair.of(sb.toString(), params);
     }
 }
